@@ -1,9 +1,8 @@
-using YgoData.Interface;
-using YgoData.YgoDataCommand;
-using YgoData.YgoQuery;
-using YgoLogic;
-using YgoLogic.GetData;
-using YgoLogic.Interfaces;
+
+using YgoData.DataCommand;
+using YgoData.DataQuery;
+using YgoData.DataQuery.Interface;
+using YgoModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +14,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddScoped<ICardLogic, CardLogic>();
-builder.Services.AddScoped<IYgoDataCommand, DataCardCommand>();
-builder.Services.AddScoped<IDataCardGetList, DataCardGetList>();
-builder.Services.AddScoped<IDataCardQuery, DataCardQuery>();
+builder.Services.AddScoped<IDataCommand, DataCommand>();
+builder.Services.AddScoped<IDataQuery<ExpansionDto>, ExpansionQuery>();
+builder.Services.AddScoped<IDataQuery<RarityDto>, RarityQuery>();
 
 
 var app = builder.Build();

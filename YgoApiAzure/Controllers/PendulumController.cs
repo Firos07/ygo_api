@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using YgoData.Interface;
-using YgoLogic;
-using YgoLogic.Factory;
+﻿
+using Microsoft.AspNetCore.Mvc;
+using YgoData.DataCommand;
+using YgoLogic.Factory.Creators;
 using YgoModel;
 
 namespace YgoApiAzure.Controllers
@@ -10,12 +10,10 @@ namespace YgoApiAzure.Controllers
     [Route("[controller]")]
     public class PendulumController : Controller
     {
-        private readonly ICardLogic _cardLogic;
-        private readonly IYgoDataCommand _ygoDataCommand;
+        private readonly IDataCommand _ygoDataCommand;
 
-        public PendulumController(ICardLogic cardLogic, IYgoDataCommand ygoDataCommand)
+        public PendulumController(IDataCommand ygoDataCommand)
         {
-            _cardLogic = cardLogic;
             _ygoDataCommand = ygoDataCommand;
         }
 
@@ -24,7 +22,7 @@ namespace YgoApiAzure.Controllers
         {
             try
             {
-                return Ok(_cardLogic.Insert(new PendulumCardCreator(_ygoDataCommand, card)));
+                return Ok(new PendulumCardCreator<int>(_ygoDataCommand, card).InsertData());
             }
             catch (Exception ex)
             {

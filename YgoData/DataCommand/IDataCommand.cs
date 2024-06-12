@@ -1,9 +1,9 @@
 ﻿
 using YgoModel;
 
-namespace YgoData.Interface
+namespace YgoData.DataCommand
 {
-    public interface IYgoDataCommand
+    public interface IDataCommand
     {
         public int InsertCardData(CardDto card);
         public int InsertMonsterData(MonsterCardDto monster);

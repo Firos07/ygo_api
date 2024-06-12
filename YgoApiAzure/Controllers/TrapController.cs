@@ -1,8 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using YgoData.Interface;
-using YgoLogic;
-using YgoLogic.Factory;
+using YgoData.DataCommand;
+using YgoLogic.Factory.Creators;
 using YgoModel;
 
 namespace YgoApiAzure.Controllers
@@ -11,12 +10,10 @@ namespace YgoApiAzure.Controllers
     [Route("[controller]")]
     public class TrapController : Controller
     {
-        private readonly ICardLogic _cardLogic;
-        private readonly IYgoDataCommand _ygoDataCommand;
+        private readonly IDataCommand _ygoDataCommand;
 
-        public TrapController(ICardLogic cardLogic, IYgoDataCommand ygoDataCommand)
+        public TrapController(IDataCommand ygoDataCommand)
         {
-            _cardLogic = cardLogic;
             _ygoDataCommand = ygoDataCommand;
         }
 
@@ -25,10 +22,10 @@ namespace YgoApiAzure.Controllers
         {
             try
             {
-                return Ok(_cardLogic.Insert(new TrapCardCreator(_ygoDataCommand, card)));
+                return Ok(new TrapCardCreator<int>(_ygoDataCommand, card).InsertData());
             }
             catch (Exception ex)
-            {                
+            {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }

@@ -1,21 +1,21 @@
-﻿using Microsoft.Data.SqlClient;
+﻿
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Globalization;
-using YgoData.Interface;
 using YgoModel;
 
-namespace YgoData.YgoQuery
+namespace YgoData.DataQuery.Interface
 {
-    public class DataCardQuery : IDataCardQuery
+    public class ExpansionQuery : IDataQuery<ExpansionDto>
     {
         private readonly IConfiguration _configuration;
-        public DataCardQuery(IConfiguration configuration)
+        public ExpansionQuery(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        public List<ExpansionDto> ExpansionbyCodeCardGetl(string CodeCard)
+        public List<ExpansionDto> DataByCodeGetList(string CodeCard)
         {
             var expansionList = new List<ExpansionDto>();
             using (SqlConnection connection = new(_configuration.GetConnectionString("OltpFleetMerchantConnection")))
@@ -48,6 +48,33 @@ namespace YgoData.YgoQuery
                         }
                     }
                     command.Parameters.Clear();
+
+                    //--------------------------------------------------------------------------------------------------------------//
+
+                    expansionList.ForEach(expansion => {
+                        var rarityList = new List<RarityDto>();
+                        command.CommandText = "[dbo].[USP_RarityByExtensionAndCard_GETL]";
+                        command.Parameters.Add(new SqlParameter("@Code", CodeCard));
+                        command.Parameters.Add(new SqlParameter("@IdExpansion", expansion.IdExpansion));
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var newItem = new RarityDto()
+                                {
+                                    IdRarity = reader["IdRarity"] == DBNull.Value ? 0 : Convert.ToInt32(reader["IdRarity"].ToString(), CultureInfo.CurrentCulture),
+                                    Name = reader["Name"] == DBNull.Value ? string.Empty : reader["Name"].ToString()
+                                };
+                                rarityList.Add(newItem);
+                            }
+                        }
+                        command.Parameters.Clear();
+                        expansion.RarityList = rarityList;
+                    });
+
+                    //--------------------------------------------------------------------------------------------------------------//
+
                     transaction.Commit();
                 }
                 catch (Exception ex)
@@ -60,48 +87,9 @@ namespace YgoData.YgoQuery
             return expansionList;
         }
 
-        public List<RarityDto> RaritybyCodeCardGetl(string CodeCard, int IdExtension)
+        public List<ExpansionDto> DataByCodeGetList(string Code, int Id)
         {
-            var rarityList = new List<RarityDto>();
-            using (SqlConnection connection = new(_configuration.GetConnectionString("OltpFleetMerchantConnection")))
-            {
-                connection.Open();
-                SqlCommand command = connection.CreateCommand();
-                SqlTransaction transaction;
-                transaction = connection.BeginTransaction();
-                command.Connection = connection;
-                command.Transaction = transaction;
-                command.CommandType = CommandType.StoredProcedure;
-
-                try
-                {
-                    command.CommandText = "[dbo].[USP_RarityByExtensionAndCard_GETL]";
-                    command.Parameters.Add(new SqlParameter("@Code", CodeCard));
-                    command.Parameters.Add(new SqlParameter("@IdExpansion", IdExtension));
-
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var newItem = new RarityDto()
-                            {
-                                IdRarity = reader["IdRarity"] == DBNull.Value ? 0 : Convert.ToInt32(reader["IdRarity"].ToString(), CultureInfo.CurrentCulture),
-                                Name = reader["Name"] == DBNull.Value ? string.Empty : reader["Name"].ToString()
-                            };
-                            rarityList.Add(newItem);
-                        }
-                    }
-                    command.Parameters.Clear();
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    var algo = ex.Message;
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-            return rarityList;
+            throw new NotImplementedException();
         }
     }
 }

@@ -4,18 +4,17 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Globalization;
 using YgoModel;
-using YgoData.Interface;
 
-namespace YgoData.YgoDataCommand
+namespace YgoData.DataCommand
 {
-    public class DataCardCommand : IYgoDataCommand
+    public class DataCommand : IDataCommand
     {
-        private readonly IConfiguration _configuration;        
-        public DataCardCommand(IConfiguration configuration)
+        private readonly IConfiguration _configuration;
+        public DataCommand(IConfiguration configuration)
         {
             _configuration = configuration;
         }
-        
+
 
         public int InsertCardData(CardDto card)
         {
@@ -29,7 +28,7 @@ namespace YgoData.YgoDataCommand
             {
                 connection.Open();
                 SqlCommand command = connection.CreateCommand();
-                SqlTransaction transaction;                
+                SqlTransaction transaction;
                 transaction = connection.BeginTransaction();
                 command.Connection = connection;
                 command.Transaction = transaction;
@@ -45,12 +44,12 @@ namespace YgoData.YgoDataCommand
                         if (reader.Read())
                         {
                             IdTypeCard = reader["IdTypeCard"] == DBNull.Value ? 0 : Convert.ToInt32(reader["IdTypeCard"].ToString(), CultureInfo.CurrentCulture);
-                        }                        
+                        }
                     }
                     command.Parameters.Clear();
 
                     //--------------------------------------------------------------------------------------------------------------//
-                    
+
                     command.CommandText = "[dbo].[USP_SubTypeCard_INS_GET]";
                     command.Parameters.Add(new SqlParameter("Name", card.SubCardType));
                     using (SqlDataReader reader = command.ExecuteReader(CommandBehavior.SingleRow))
@@ -87,7 +86,7 @@ namespace YgoData.YgoDataCommand
                         command.CommandText = "[dbo].[USP_Expansion_INS_GET]";
                         command.Parameters.Add(new SqlParameter("Code", splitCodeExpansion?.First()));
                         command.Parameters.Add(new SqlParameter("Name", expansion.Name));
-                        command.Parameters.Add(new SqlParameter("ReleaseDate", expansion.ReleaseDate));                        
+                        command.Parameters.Add(new SqlParameter("ReleaseDate", expansion.ReleaseDate));
                         using (SqlDataReader reader = command.ExecuteReader(CommandBehavior.SingleRow))
                         {
                             if (reader.Read())
@@ -123,12 +122,12 @@ namespace YgoData.YgoDataCommand
                             command.Parameters.Clear();
                         });
                     });
-                                        
+
                     transaction.Commit();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    var algo = ex.Message;                    
+                    var algo = ex.Message;
                     transaction.Rollback();
                     throw;
                 }
@@ -221,7 +220,7 @@ namespace YgoData.YgoDataCommand
 
         public int InsertPendulumData(PendulumCardDto pendulum)
         {
-            
+
             int IdMonsterCard = InsertMonsterData(pendulum);
             int IdPendulumAdditionalData = 0;
 
