@@ -3,7 +3,6 @@ using YgoData.DataCommand;
 using YgoData.DataCommand.Interface;
 using YgoData.DataQuery;
 using YgoData.DataQuery.Interface;
-using YgoModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
