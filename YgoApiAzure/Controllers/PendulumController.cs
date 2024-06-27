@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using YgoData.DataCommand;
+using YgoData.DataCommand.Interface;
 using YgoLogic.Factory.Creators;
 using YgoModel;
 

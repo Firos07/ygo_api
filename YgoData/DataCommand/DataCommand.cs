@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Globalization;
+using YgoData.DataCommand.Interface;
 using YgoModel;
 
 namespace YgoData.DataCommand

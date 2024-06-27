@@ -1,16 +1,17 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using YgoData.DataQuery.Interface;
-using YgoLogic.Factory.Creators;
-using YgoModel;
+using YgoLogic.FactoryExpansion.Creator;
 
 namespace YgoApiAzure.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class ExpansionController : Controller
     {
-        private readonly IDataQuery<ExpansionDto> _cardData;
+        private readonly IExpansionQuery _cardData;
 
-        public ExpansionController(IDataQuery<ExpansionDto> cardData)
+        public ExpansionController(IExpansionQuery cardData)
         {
             _cardData = cardData;
         }
@@ -20,7 +21,7 @@ namespace YgoApiAzure.Controllers
         {
             try
             {
-                return Ok(new ExpansionCreator(_cardData).DataByCodeGetList(CodeCard));
+                return Ok(new ExpansionCreator(_cardData).DataByCodeCardGetList(CodeCard));
             }
             catch (Exception ex)
             {

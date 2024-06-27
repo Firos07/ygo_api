@@ -7,7 +7,7 @@ using YgoModel;
 
 namespace YgoData.DataQuery.Interface
 {
-    public class ExpansionQuery : IDataQuery<ExpansionDto>
+    public class ExpansionQuery : IExpansionQuery
     {
         private readonly IConfiguration _configuration;
         public ExpansionQuery(IConfiguration configuration)
@@ -30,7 +30,7 @@ namespace YgoData.DataQuery.Interface
 
                 try
                 {
-                    command.CommandText = "[dbo].[USP_ExtensionByCodeCard_GETL]";
+                    command.CommandText = "[dbo].[USP_ExpansionByCodeCard_GETL]";
                     command.Parameters.Add(new SqlParameter("@Code", CodeCard));
 
                     using (SqlDataReader reader = command.ExecuteReader())
@@ -53,7 +53,7 @@ namespace YgoData.DataQuery.Interface
 
                     expansionList.ForEach(expansion => {
                         var rarityList = new List<RarityDto>();
-                        command.CommandText = "[dbo].[USP_RarityByExtensionAndCard_GETL]";
+                        command.CommandText = "[dbo].[USP_RarityByExpansionAndCard_GETL]";
                         command.Parameters.Add(new SqlParameter("@Code", CodeCard));
                         command.Parameters.Add(new SqlParameter("@IdExpansion", expansion.IdExpansion));
 
@@ -85,11 +85,6 @@ namespace YgoData.DataQuery.Interface
                 }
             }
             return expansionList;
-        }
-
-        public List<ExpansionDto> DataByCodeGetList(string Code, int Id)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -8,7 +8,7 @@ using YgoModel;
 
 namespace YgoData.DataQuery
 {
-    public class RarityQuery : IDataQuery<RarityDto>
+    public class RarityQuery : IRarityQuery
     {
         private readonly IConfiguration _configuration;
 
@@ -17,7 +17,7 @@ namespace YgoData.DataQuery
             _configuration = configuration;
         }
 
-        public List<RarityDto> DataByCodeGetList(string CodeCard, int IdExtension)
+        public List<RarityDto> RarityByCardAndExtensionGetList(string CodeCard, int IdExtension)
         {
             var rarityList = new List<RarityDto>();
             using (SqlConnection connection = new(_configuration.GetConnectionString("OltpFleetMerchantConnection")))
@@ -32,7 +32,7 @@ namespace YgoData.DataQuery
 
                 try
                 {
-                    command.CommandText = "[dbo].[USP_RarityByExtensionAndCard_GETL]";
+                    command.CommandText = "[dbo].[USP_RarityByExpansionAndCard_GETL]";
                     command.Parameters.Add(new SqlParameter("@Code", CodeCard));
                     command.Parameters.Add(new SqlParameter("@IdExpansion", IdExtension));
 
@@ -59,11 +59,6 @@ namespace YgoData.DataQuery
                 }
             }
             return rarityList;
-        }
-
-        public List<RarityDto> DataByCodeGetList(string Code)
-        {
-            throw new NotImplementedException();
         }
     }
 }
